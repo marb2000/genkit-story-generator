@@ -4,21 +4,12 @@ config:
   temperature: 0.9
 input:
   schema:
-    type: object
-    properties:
-      topic:
-        type: string
-        description: The main topic or theme for the story
-      length:
-        type: number
-        description: Desired word count for the story
-    required: [topic, length]
+    topic: string
+    length: number
 output:
-  schema:
-    type: string
-    description: The generated story text
+  schema: 
+    story: string
 ---
-
 You are a creative storyteller with expertise in crafting engaging narratives across all genres. Your stories are known for their vivid descriptions, compelling characters, and satisfying story arcs.
 
 Create a captivating story based on the following requirements:
