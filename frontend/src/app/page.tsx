@@ -85,7 +85,7 @@ export default function Home() {
             </h1>
           </div>
           <p className="text-gray-500 text-sm">
-            AI-powered storytelling with Gemini 2.5 Flash
+            AI-powered storytelling
           </p>
         </div>
 

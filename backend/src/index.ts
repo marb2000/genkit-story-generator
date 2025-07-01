@@ -23,8 +23,9 @@ const ai = genkit({
 // Zod schemas for validation
 const StoryInputSchema = z.object({
   topic: z.string().min(3, "Topic must be at least 3 characters long."),
-  length: z.number().min(10).max(2000).default(250),
+  length: z.number().min(10, 'Length must be at least 10').max(2000, 'Length must be at most 2000').default(250),
 });
+
 const StoryOutputSchema = z.string();
 
 // Load the story generation prompt from file
@@ -69,38 +70,25 @@ const generateStoryFlow = ai.defineFlow(
 // API endpoint for story generation
 app.post('/api/generate-story', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { topic, length } = req.body;
-    
-    // Validate input
-    if (!topic || !length) {
+       
+    // Validate input with Zod 
+    const validation = StoryInputSchema.safeParse(req.body);
+    if (!validation.success) {
       res.status(400).json({ 
-        error: 'Topic and length are required' 
+        error: validation.error.errors[0].message 
       });
       return;
     }
 
-    // Additional validation
-    if (typeof topic !== 'string' || topic.trim().length === 0) {
-      res.status(400).json({ 
-        error: 'Topic must be a non-empty string' 
-      });
-      return;
-    }
-
-    if (typeof length !== 'number' || length < 10 || length > 2000) {
-      res.status(400).json({ 
-        error: 'Length must be a number between 10 and 2000' 
-      });
-      return;
-    }
-
-    // Generate the story using the Genkit flow with system instructions
+    const { topic, length } = validation.data;
+    //Generate the Story with Genkit
     const story = await generateStoryFlow({ 
       topic: topic.trim(), 
       length: Number(length) 
     });
     
     res.json({ story });
+
   } catch (error) {
     console.error('Error generating story:', error);
     res.status(500).json({ 
